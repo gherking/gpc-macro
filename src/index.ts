@@ -1,36 +1,32 @@
-import { PreCompiler } from "gherking";
-import { Scenario, ScenarioOutline, Step, Tag } from "gherkin-ast";
+import {PreCompiler} from "gherking";
+import {Scenario, Step, Tag} from "gherkin-ast";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const debug = require("debug")("gpc:template");
 const MACROSTEP = /^macro (.*) ?is executed$/;
 
-// interface Macros<T> {
-//     [key: string]: T;
-// }
+interface Macros<T> {
+    [key: string]: T;
+}
 
 class Macro implements PreCompiler {
-    // macros: Macros;
+    private readonly macros: Macros<Scenario>;
+
     constructor() {
-        debug("Intialize");
+        debug("Initialize");
         this.macros = {};
     }
 
-    /**
-     * Function to filter out scenarios of a feature (scenario, scenario outline)
-     * before they are processed.
-     * Return FALSE if the given element should be filtered out. Otherwise it won't be.
-     *
-     * @param {Scenario|ScenarioOutline} scenario The scenario to be tested.
-     * @returns {boolean|*} FALSE if the given element should be filtered out.
-     */
-    preFilterScenario(scenario: Scenario | ScenarioOutline) {
+    public preScenario(scenario: Scenario) {
+        debug("preScenario(hasScenario: %s)", !!scenario);
+        debug("...scenario tags: %s", scenario?.tags.join());
         if (!scenario.tags) {
-            return;
+            return true;
         }
-        const macroTag: Tag = scenario.tags.find((tag: Tag) => /^@macro\(.*\)/.test(tag.name));
-
+        const macroTag: Tag = scenario.tags.find((tag: Tag) => /^@macro\(.*\)/i.test(tag.name));
+        debug("...macroTag: %o", macroTag);
         if (macroTag) {
-            const name: string = macroTag.name.substring(7, macroTag.name.length - 1);
+            const name: string = macroTag.value.toUpperCase();
+            debug("...name: %s", name);
 
             if (name.length === 0) {
                 throw new Error(`Name is not provided for macro for scenario ${scenario.name}.`);
@@ -39,7 +35,7 @@ class Macro implements PreCompiler {
             if (name in this.macros) {
                 throw new Error(`Name ${name} already used in scenario ${this.macros[name].name}.`);
             }
-
+            debug("... type of scenario.steps: %s", typeof scenario.steps);
             if (scenario.steps.length === 0) {
                 throw new Error(`Macro ${name} does not contain any steps.`);
             }
@@ -48,49 +44,37 @@ class Macro implements PreCompiler {
                 throw new Error(`Macro ${name} contains a macro step.`);
             }
             this.macros[name] = scenario;
+            debug("...macros: %s", Object.keys(this.macros).join());
             return false;
         }
+        debug("...no macro");
+        return true;
     }
 
-    onStep(step: Step) {
+    public onStep(step: Step) {
+        debug("onStep(step: %s)", step?.text);
         if (MACROSTEP.test(step.text)) {
-            const name: string = step.text.match(MACROSTEP)[1].trim();
+            const name: string = step.text.match(MACROSTEP)[1].trim().toUpperCase();
+            debug("...name: %s", name);
             if (name.length === 0) {
                 throw new Error('Macro name is not provided for macro scenario.');
             }
 
             if (!(name in this.macros)) {
+                debug("...macros: %s", Object.keys(this.macros).join());
                 throw new Error(`Macro ${name} does not exist.`);
             }
 
             return this.macros[name].steps;
         }
+        debug("...Not a macro step.");
     }
 
-    /**
-     * Creates macro step
-     * @static
-     * @param {String} macro
-     * @returns {Step}
-     */
-    static createStep(macro: string) {
+    public static createStep(macro: string) {
+        debug("createStep(macro: %s)", macro);
         return new Step('When', `macro ${macro} is executed`);
     }
 }
 
 // IMPORTANT: the precompiler class MUST be the export!
 export = Macro;
-/*
- * @example:
- * class MyPrecompiler implements PreCompiler {
- *   constructor(config) {
- *     super();
- *     this.config = config;
- *   }
- *
- *   onScenario(scenario) {
- *     // doing smth with scenario
- *   }
- * }
- * export = MyPrecompiler
- */

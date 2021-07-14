@@ -1,6 +1,6 @@
 import { load, process } from "gherking";
 import { Document } from "gherkin-ast";
-import { Template } from "../src";
+import Macro = require("../src");
 
 const loadTestFeatureFile = async (folder: "input" | "expected", file: string): Promise<Document> => {
     const ast = await load(`./tests/data/${folder}/${file}`);
@@ -18,7 +18,7 @@ describe("Template", () => {
 
     test("should not do anything", async () => {
         const expected = await loadTestFeatureFile("expected", "test.feature");
-        const actual = process(base, new Template());
+        const actual = process(base, new Macro());
 
         expect(actual).toHaveLength(1);
         expect(actual[0]).toEqual(expected);
