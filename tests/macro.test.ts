@@ -1,15 +1,37 @@
-import { Step } from "gherkin-ast";
+import { Scenario, Step, Tag } from "gherkin-ast";
 import Macro = require("../src");
 
 describe("Macro", () => {
     describe("Constructor", () => {
-        test.todo("should be empty");
+        test("should be empty", () => {
+            const macro = new Macro();
+            expect(macro.macros).toEqual({});
+        });
     });
 
     describe(".preScenario", () => {
-        test.todo("should not remove scenario if scenario does not have any tags");
-        test.todo("should not remove scenario if scenario does not have macro tag");
-        test.todo("should handle macro tag without name");
+        let macro: Macro;
+        let scenario: Scenario;
+        beforeEach(() => {
+            macro = new Macro();
+            scenario = new Scenario("Scenario", "test", "");
+        });
+        test("should not remove scenario if scenario does not have any tags", () => {
+            const result = macro.preScenario(scenario);
+            expect(result).toBe(true);
+            expect(macro.macros).toEqual({});
+
+        });
+        test("should not remove scenario if scenario does not have macro tag", () => {
+            scenario.tags.push(new Tag("tag"));
+            const result = macro.preScenario(scenario);
+            expect(result).toBe(true);
+            expect(macro.macros).toEqual({});
+        });
+        test("should handle macro tag without name", () => {
+            scenario.tags.push(new Tag("macro", ""));
+            expect(() => macro.preScenario(scenario)).toThrow("Name is not provided for macro for scenario test.");
+        });
         test.todo("should handle existing macro");
         test.todo("should handle macro without any steps");
         test.todo("should handle macro with macro step");

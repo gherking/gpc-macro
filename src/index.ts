@@ -9,7 +9,7 @@ interface Macros<T> {
 }
 
 class Macro implements PreCompiler {
-    private readonly macros: Macros<Scenario>;
+    public readonly macros: Macros<Scenario>;
 
     constructor() {
         debug("Initialize");
@@ -19,10 +19,10 @@ class Macro implements PreCompiler {
     public preScenario(scenario: Scenario) {
         debug("preScenario(hasScenario: %s)", !!scenario);
         debug("...scenario tags: %s", scenario?.tags.join());
-        if (!scenario.tags) {
+        if (!Array.isArray(scenario.tags) || scenario.tags.length === 0) {
             return true;
         }
-        const macroTag: Tag = scenario.tags.find((tag: Tag) => /^@macro\(.*\)/i.test(tag.name));
+        const macroTag: Tag = scenario.tags.find((tag: Tag) => tag.name.toLowerCase() === "macro");
         debug("...macroTag: %o", macroTag);
         if (macroTag) {
             const name: string = macroTag.value.toUpperCase();
