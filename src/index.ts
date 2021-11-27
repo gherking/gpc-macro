@@ -1,7 +1,7 @@
 import {PreCompiler} from "gherking";
 import {Scenario, Step, Tag} from "gherkin-ast";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const debug = require("debug")("gpc:template");
+const debug = require("debug")("gpc:macro");
 const MACROSTEP = /^macro (.*) ?is executed$/;
 
 interface Macros<T> {
