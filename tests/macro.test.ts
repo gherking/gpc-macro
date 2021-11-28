@@ -1,42 +1,62 @@
 import { Scenario, Step, Tag } from "gherkin-ast";
-import Macro = require("../src");
+import MacroPreCompiler = require("../src");
 
 describe("Macro", () => {
     describe("Constructor", () => {
         test("should be empty", () => {
-            const macro = new Macro();
+            const macro = new MacroPreCompiler();
             expect(macro.macros).toEqual({});
         });
     });
 
     describe(".preScenario", () => {
-        let macro: Macro;
+        let macroPreCompiler: MacroPreCompiler;
         let scenario: Scenario;
         beforeEach(() => {
-            macro = new Macro();
+            macroPreCompiler = new MacroPreCompiler();
             scenario = new Scenario("Scenario", "test", "");
         });
         test("should not remove scenario if scenario does not have any tags", () => {
-            const result = macro.preScenario(scenario);
+            const result = macroPreCompiler.preScenario(scenario);
             expect(result).toBe(true);
-            expect(macro.macros).toEqual({});
+            expect(macroPreCompiler.macros).toEqual({});
 
         });
         test("should not remove scenario if scenario does not have macro tag", () => {
             scenario.tags.push(new Tag("tag"));
-            const result = macro.preScenario(scenario);
+            const result = macroPreCompiler.preScenario(scenario);
             expect(result).toBe(true);
-            expect(macro.macros).toEqual({});
+            expect(macroPreCompiler.macros).toEqual({});
         });
         test("should handle macro tag without name", () => {
             scenario.tags.push(new Tag("macro", ""));
-            expect(() => macro.preScenario(scenario)).toThrow("Name is not provided for macro for scenario test.");
+            expect(() => macroPreCompiler.preScenario(scenario)).toThrow("Name is not provided for macro for scenario test.");
         });
-        test.todo("should handle existing macro");
-        test.todo("should handle macro without any steps");
-        test.todo("should handle macro with macro step");
-        test.todo("should remove macro scenario");
-        test.todo("should save macro");
+        test("should handle existing macro", () => {
+            scenario.tags.push(new Tag("macro", "test"));
+            macroPreCompiler.macros.TEST = scenario;
+            expect(() => macroPreCompiler.preScenario(scenario)).toThrow("Name TEST already used in scenario test.");
+        });
+        test("should handle macro without any steps", () => {
+            scenario.tags.push(new Tag("macro", "test"));
+            expect(() => macroPreCompiler.preScenario(scenario)).toThrow("Macro TEST does not contain any steps.");
+        });
+        test("should handle macro with macro step", () => {
+            scenario.tags.push(new Tag("macro", "test"));
+            scenario.steps.push(MacroPreCompiler.createStep("step"));
+            expect(() => macroPreCompiler.preScenario(scenario)).toThrow("Macro TEST contains a macro step.");
+        });
+        test("should remove macro scenario", () => {
+            scenario.tags.push(new Tag("macro", "test"));
+            scenario.steps.push(new Step("step", "test"));
+            expect(macroPreCompiler.preScenario(scenario)).toBe(false);
+        });
+        test("should save macro", () => {
+            scenario.tags.push(new Tag("macro", "test"));
+            scenario.steps.push(new Step("step", "test"));
+            macroPreCompiler.preScenario(scenario);
+            expect(macroPreCompiler.macros).toEqual({TEST: scenario});
+        });
     });
 
     describe(".onStep", () => {
@@ -48,7 +68,7 @@ describe("Macro", () => {
 
     describe(".createStep", () => {
         test("should create a macro step", () => {
-            const step = Macro.createStep("test-macro");
+            const step = MacroPreCompiler.createStep("test-macro");
             expect(step).toBeInstanceOf(Step);
             expect(step.text).toBe('macro test-macro is executed');
         });

@@ -8,7 +8,7 @@ interface Macros<T> {
     [key: string]: T;
 }
 
-class Macro implements PreCompiler {
+class MacroPreCompiler implements PreCompiler {
     public readonly macros: Macros<Scenario>;
 
     constructor() {
@@ -70,11 +70,11 @@ class Macro implements PreCompiler {
         debug("...Not a macro step.");
     }
 
-    public static createStep(macro: string) {
-        debug("createStep(macro: %s)", macro);
-        return new Step('When', `macro ${macro} is executed`);
+    public static createStep(macroName: string) {
+        debug("createStep(macroName: %s)", macroName);
+        return new Step('When', `macro ${macroName} is executed`);
     }
 }
 
 // IMPORTANT: the precompiler class MUST be the export!
-export = Macro;
+export = MacroPreCompiler;
