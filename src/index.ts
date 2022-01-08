@@ -1,5 +1,5 @@
-import {PreCompiler} from "gherking";
-import {Scenario, Step, Tag} from "gherkin-ast";
+import { PreCompiler } from "gherking";
+import { Scenario, Step, Tag } from "gherkin-ast";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const debug = require("debug")("gpc:macro");
 const MACROSTEP = /^macro (.*) ?is executed$/;
@@ -16,8 +16,9 @@ class MacroPreCompiler implements PreCompiler {
         this.macros = {};
     }
 
-    public preScenario(scenario: Scenario) {
+    public preScenario(scenario: Scenario): boolean {
         debug("preScenario(hasScenario: %s)", !!scenario);
+        /* istanbul ignore next */
         debug("...scenario tags: %s", scenario?.tags.join());
         if (!Array.isArray(scenario.tags) || scenario.tags.length === 0) {
             return true;
@@ -51,7 +52,8 @@ class MacroPreCompiler implements PreCompiler {
         return true;
     }
 
-    public onStep(step: Step) {
+    public onStep(step: Step): Step[] {
+        /* istanbul ignore next */
         debug("onStep(step: %s)", step?.text);
         if (MACROSTEP.test(step.text)) {
             const name: string = step.text.match(MACROSTEP)[1].trim().toUpperCase();
@@ -70,7 +72,7 @@ class MacroPreCompiler implements PreCompiler {
         debug("...Not a macro step.");
     }
 
-    public static createStep(macroName: string) {
+    public static createStep(macroName: string): Step {
         debug("createStep(macroName: %s)", macroName);
         return new Step('When', `macro ${macroName} is executed`);
     }

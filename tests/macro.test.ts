@@ -60,10 +60,31 @@ describe("Macro", () => {
     });
 
     describe(".onStep", () => {
-        test.todo("should not do anything with non macro steps");
-        test.todo("should handle if macro name is not provided");
-        test.todo("should handle non-existing macro");
-        test.todo("should replace macro to the steps of the macro");
+        let macroPreCompiler: MacroPreCompiler;
+        beforeEach(() => {
+            macroPreCompiler = new MacroPreCompiler();
+        });
+        test("should not do anything with non macro steps", () => {
+            const step = new Step("given", "not macro step");
+            const result = macroPreCompiler.onStep(step);
+            expect(result).toBeUndefined();
+        });
+        test("should handle if macro name is not provided", () => {
+            const step = new Step("given", "macro is executed");
+            expect(() => macroPreCompiler.onStep(step)).toThrow("Macro name is not provided for macro scenario.");
+        });
+        test("should handle non-existing macro", () => {
+            const step = MacroPreCompiler.createStep("non-existing");
+            expect(() => macroPreCompiler.onStep(step)).toThrow("Macro NON-EXISTING does not exist.");
+        });
+        test("should replace macro to the steps of the macro", () => {
+            const scenario = new Scenario("Scenario", "test scenario", "");
+            scenario.steps.push(new Step("step", "test"));
+            macroPreCompiler.macros.TEST = scenario;
+            const step = MacroPreCompiler.createStep("test");
+            const result = macroPreCompiler.onStep(step);
+            expect(result).toEqual(scenario.steps);
+        });
     });
 
     describe(".createStep", () => {
