@@ -1,4 +1,4 @@
-# gpc-macro: macro for GherKing
+# gpc-macro
 
 ![Downloads](https://img.shields.io/npm/dw/gpc-macro?style=flat-square)
 ![Version@npm](https://img.shields.io/npm/v/gpc-macro?label=version%40npm&style=flat-square)
