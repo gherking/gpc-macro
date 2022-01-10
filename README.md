@@ -27,12 +27,12 @@ See examples for the input files and an output in the `tests/data` folder.
 const compiler = require('gherking');
 const Macro = require('gpc-macro');
 
-let ast = compiler.load('./features/src/login.feature');
+let ast = await compiler.load('./features/src/login.feature');
 ast = compiler.process(
     ast,
     new Macro(),
 );
-compiler.save('./features/dist/login.feature', ast, {
+await compiler.save('./features/dist/login.feature', ast, {
     lineBreak: '\r\n'
 });
 ```
@@ -41,12 +41,12 @@ compiler.save('./features/dist/login.feature', ast, {
 import {load, process, save} from "gherking";
 import Macro = require("gpc-macro");
 
-let ast = load("./features/src/login.feature");
+let ast = await load("./features/src/login.feature");
 ast = process(
     ast,
     new Macro(),
 );
-save('./features/dist/login.feature', ast, {
+await save('./features/dist/login.feature', ast, {
     lineBreak: '\r\n'
 });
 ```
@@ -59,6 +59,12 @@ save('./features/dist/login.feature', ast, {
 
 **Returns**: `{Step}` - A macro step for the given macro.
 
-For detailed documentation see the [TypeDocs documentation](https://gherking.github.io/gpc-macro/).
+## Other
 
-This package uses [debug](https://www.npmjs.com/package/debug) for logging.
+This package uses [debug](https://www.npmjs.com/package/debug) for logging, use `gpc:remove-macro` :
+
+```shell
+DEBUG=gpc:macro* gherking ...
+```
+
+For detailed documentation see the [TypeDocs documentation](https://gherking.github.io/gpc-macro/).
