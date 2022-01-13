@@ -61,7 +61,7 @@ await save('./features/dist/login.feature', ast, {
 
 ## Other
 
-This package uses [debug](https://www.npmjs.com/package/debug) for logging, use `gpc:remove-macro` :
+This package uses [debug](https://www.npmjs.com/package/debug) for logging, use `gpc:macro` :
 
 ```shell
 DEBUG=gpc:macro* gherking ...
