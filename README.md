@@ -6,7 +6,7 @@
 ![CI](https://img.shields.io/github/workflow/status/gherking/gpc-macro/CI/master?label=ci&style=flat-square)
 ![Docs](https://img.shields.io/github/workflow/status/gherking/gpc-macro/Docs/master?label=docs&style=flat-square)
 
-This pre-processor is responsible for defining macros in feature files and then executing them.
+This precompiler is responsible for defining macros in feature files and then executing them.
 
 ## Usage
 

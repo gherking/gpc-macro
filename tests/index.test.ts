@@ -8,8 +8,7 @@ const loadTestFeatureFile = async (folder: "input" | "expected", file: string): 
     return ast[0];
 }
 
-// TODO: Add tests of your precompiler
-describe("Template", () => {
+describe("Macro", () => {
     let base: Document;
 
     beforeAll(async () => {

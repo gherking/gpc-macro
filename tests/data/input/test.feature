@@ -5,14 +5,14 @@ Feature: Test for macro
 
   @macro(not_used_macro)
   Scenario: Macro not used
-    Given the Index pages is opened
+    Given the Index page is opened
     When the username field is filled with the username of user_1
     And the password field is filled with the password of user_1
     And the login button is clicked
 
   @macro(login)
   Scenario: Macro scenario for login
-    Given the Login pages is opened
+    Given the Login page is opened
     When the username field is filled with the username of user_1
     And the password field is filled with the password of user_1
     And the login button is clicked
@@ -26,6 +26,6 @@ Feature: Test for macro
     Then nothing happens
 
   Scenario: Login 2
-    Given Index page is opened
+    Given the Index page is opened
     And macro login is executed
     Then the Home page should be loaded

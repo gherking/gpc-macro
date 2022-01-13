@@ -4,7 +4,7 @@ Feature: Test for macro
     Given step
 
   Scenario: Logging in
-    Given the Login pages is opened
+    Given the Login page is opened
     When the username field is filled with the username of user_1
     And the password field is filled with the password of user_1
     And the login button is clicked
@@ -15,8 +15,8 @@ Feature: Test for macro
     Then nothing happens
 
   Scenario: Login 2
-    Given Index page is opened
-    Given the Login pages is opened
+    Given the Index page is opened
+    Given the Login page is opened
     When the username field is filled with the username of user_1
     And the password field is filled with the password of user_1
     And the login button is clicked
