@@ -1,0 +1,50 @@
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>gpc-macro</title><meta name="description" content="Documentation for gpc-macro"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">gpc-macro</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>gpc-macro</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#gpc-macro" id="gpc-macro" style="color: inherit; text-decoration: none;">
+  <h1>gpc-macro</h1>
+</a>
+<p><img src="https://img.shields.io/npm/dw/gpc-macro?style=flat-square" alt="Downloads">
+<img src="https://img.shields.io/npm/v/gpc-macro?label=version%40npm&style=flat-square" alt="Version@npm">
+<img src="https://img.shields.io/github/package-json/v/gherking/gpc-macro/master?label=version%40git&style=flat-square" alt="Version@git">
+<img src="https://img.shields.io/github/workflow/status/gherking/gpc-macro/CI/master?label=ci&style=flat-square" alt="CI">
+<img src="https://img.shields.io/github/workflow/status/gherking/gpc-macro/Docs/master?label=docs&style=flat-square" alt="Docs"></p>
+<p>This precompiler is responsible for defining macros in feature files and then executing them.</p>
+
+<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+  <h2>Usage</h2>
+</a>
+<ol>
+<li><p>Defining a macro by creating  macro scenario. Using <code>@macro(${macroName})</code> tag on the scenario defines a macro with the provided name and steps that are included.</p>
+<p>Note: this scenario will not be run during test execution, it is removed during pre-processing. The definition cannot contain macro execution step (see next step).</p>
+<p>Errors are thrown when no name or steps are included in the definition, or when defining a macro with an already existing name.</p>
+</li>
+<li><p>Executing the macro. In another scenario using step <code>&#39;macro ${macroName} is executed&#39;</code> will replace this step with the steps in the definition of <code>${macroName}</code> macro.</p>
+<p>Throws error when no <code>${macroName}</code> is provided in the step, or when no macro is defined by name provided.</p>
+</li>
+</ol>
+<p>See examples for the input files and an output in the <code>tests/data</code> folder.</p>
+<pre><code class="language-javascript"><span class="hl-0">&#39;use strict&#39;</span><span class="hl-1">;</span><br/><span class="hl-2">const</span><span class="hl-1"> </span><span class="hl-3">compiler</span><span class="hl-1"> = </span><span class="hl-4">require</span><span class="hl-1">(</span><span class="hl-0">&#39;gherking&#39;</span><span class="hl-1">);</span><br/><span class="hl-2">const</span><span class="hl-1"> </span><span class="hl-3">Macro</span><span class="hl-1"> = </span><span class="hl-4">require</span><span class="hl-1">(</span><span class="hl-0">&#39;gpc-macro&#39;</span><span class="hl-1">);</span><br/><br/><span class="hl-2">let</span><span class="hl-1"> </span><span class="hl-5">ast</span><span class="hl-1"> = </span><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">compiler</span><span class="hl-1">.</span><span class="hl-4">load</span><span class="hl-1">(</span><span class="hl-0">&#39;./features/src/login.feature&#39;</span><span class="hl-1">);</span><br/><span class="hl-5">ast</span><span class="hl-1"> = </span><span class="hl-5">compiler</span><span class="hl-1">.</span><span class="hl-4">process</span><span class="hl-1">(</span><br/><span class="hl-1">    </span><span class="hl-5">ast</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-2">new</span><span class="hl-1"> </span><span class="hl-4">Macro</span><span class="hl-1">(),</span><br/><span class="hl-1">);</span><br/><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-5">compiler</span><span class="hl-1">.</span><span class="hl-4">save</span><span class="hl-1">(</span><span class="hl-0">&#39;./features/dist/login.feature&#39;</span><span class="hl-1">, </span><span class="hl-5">ast</span><span class="hl-1">, {</span><br/><span class="hl-1">    </span><span class="hl-5">lineBreak:</span><span class="hl-1"> </span><span class="hl-0">&#39;</span><span class="hl-7">\r\n</span><span class="hl-0">&#39;</span><br/><span class="hl-1">});</span>
+</code></pre>
+<pre><code class="language-typescript"><span class="hl-6">import</span><span class="hl-1"> {</span><span class="hl-5">load</span><span class="hl-1">, </span><span class="hl-5">process</span><span class="hl-1">, </span><span class="hl-5">save</span><span class="hl-1">} </span><span class="hl-6">from</span><span class="hl-1"> </span><span class="hl-0">&quot;gherking&quot;</span><span class="hl-1">;</span><br/><span class="hl-6">import</span><span class="hl-1"> </span><span class="hl-5">Macro</span><span class="hl-1"> = </span><span class="hl-6">require</span><span class="hl-1">(</span><span class="hl-0">&quot;gpc-macro&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-2">let</span><span class="hl-1"> </span><span class="hl-5">ast</span><span class="hl-1"> = </span><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-4">load</span><span class="hl-1">(</span><span class="hl-0">&quot;./features/src/login.feature&quot;</span><span class="hl-1">);</span><br/><span class="hl-5">ast</span><span class="hl-1"> = </span><span class="hl-4">process</span><span class="hl-1">(</span><br/><span class="hl-1">    </span><span class="hl-5">ast</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-2">new</span><span class="hl-1"> </span><span class="hl-4">Macro</span><span class="hl-1">(),</span><br/><span class="hl-1">);</span><br/><span class="hl-6">await</span><span class="hl-1"> </span><span class="hl-4">save</span><span class="hl-1">(</span><span class="hl-0">&#39;./features/dist/login.feature&#39;</span><span class="hl-1">, </span><span class="hl-5">ast</span><span class="hl-1">, {</span><br/><span class="hl-1">    </span><span class="hl-5">lineBreak:</span><span class="hl-1"> </span><span class="hl-0">&#39;</span><span class="hl-7">\r\n</span><span class="hl-0">&#39;</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#api" id="api" style="color: inherit; text-decoration: none;">
+  <h2>API</h2>
+</a>
+
+<a href="#macrocreatestepname" id="macrocreatestepname" style="color: inherit; text-decoration: none;">
+  <h3><code>Macro.createStep(name)</code></h3>
+</a>
+<p><strong>Params</strong>:</p>
+<ul>
+<li><code>{String} name</code> - The name of the macro</li>
+</ul>
+<p><strong>Returns</strong>: <code>{Step}</code> - A macro step for the given macro.</p>
+
+<a href="#other" id="other" style="color: inherit; text-decoration: none;">
+  <h2>Other</h2>
+</a>
+<p>This package uses <a href="https://www.npmjs.com/package/debug">debug</a> for logging, use <code>gpc:macro</code> :</p>
+<pre><code class="language-shell"><span class="hl-1">DEBUG=gpc:macro* gherking ...</span>
+</code></pre>
+<p>For detailed documentation see the <a href="https://gherking.github.io/gpc-macro/">TypeDocs documentation</a>.</p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/export_.html" class="tsd-kind-icon">export=</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
